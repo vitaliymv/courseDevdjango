@@ -1,12 +1,13 @@
 from django.http import HttpResponse
 from django.views import View
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, TemplateView
 from .models import Student, Teacher, Course
 from django.urls import reverse_lazy
 from .forms import StudentForm
 from faker import Faker
 import random
 from django.db.models import Avg, Count, F, Q
+import json
 
 class StudentCreateView(CreateView):
     model = Student
@@ -91,3 +92,81 @@ class CourseListView(ListView):
         ).filter(
             student_count__gt=2
         )
+
+class DashboardView(TemplateView):
+    template_name = "dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        stats = Student.objects.aggregate(
+            total_students=Count("id"),
+            avg_score=Avg("score"),
+        )
+        # number of students, average,
+        # number of courses, number of teachers
+        context["total_students"] = stats["total_students"]
+        context["avg_score"] = round(stats["avg_score"] or 0, 2)
+        context["total_courses"] = Course.objects.count()
+        context["total_teachers"] = Teacher.objects.count()
+
+        # number of students in each course
+        courses = Course.objects.annotate(
+            student_count=Count("students")
+        )
+        course_labels = [c.title for c in courses]
+        course_data = [c.student_count for c in courses]
+
+        context["course_labels"] = json.dumps(course_labels)
+        context["course_data"] = json.dumps(course_data)
+        # courses by difficulty
+        difficulty_data = Course.objects.values(
+            "difficulty"
+        ).annotate(
+            count=Count("id")
+        )
+        context["diff_labels"] = json.dumps(
+            [
+                str(d["difficulty"])
+                for d in difficulty_data
+            ]
+        )
+        context["diff_data"] = json.dumps(
+            [
+                d["count"]
+                for d in difficulty_data
+            ]
+        )
+
+        # average score of students for each teacher
+        teachers = Teacher.objects.annotate(
+            avg_score=Avg("students__score")
+        )
+        teacher_labels = [
+            t.name
+            for t in teachers
+        ]
+        teacher_data = [
+            round(t.avg_score or 0, 2)
+            for t in teachers
+        ]
+        context["teacher_labels"] = json.dumps(teacher_labels)
+        context["teacher_data"] = json.dumps(teacher_data)
+
+        # age distribution
+        age_data = Student.objects.values(
+            "age"
+        ).annotate(
+            count=Count("id")
+        ).order_by("age")
+        age_labels = [
+            str(a["age"])
+            for a in age_data
+        ]
+        age_counts = [
+            a["count"]
+            for a in age_data
+        ]
+        context["age_labels"] = json.dumps(age_labels)
+        context["age_data"] = json.dumps(age_counts)
+
+        return context

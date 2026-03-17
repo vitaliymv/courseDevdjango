@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Teachers List</h1>
+{% extends 'base.html' %}
 
-<ul>
-  {% for teacher in teachers %}
-    <li>{{ teacher.name }} — Avg Score: {{ teacher.avg_score|default:"No students" }}</li>
-  {% endfor %}
-</ul>
-</body>
-</html>
+{% block title %}
+    Teachers list
+{% endblock %}
+
+{% block content %}
+    <h1>Teachers List</h1>
+
+    <ul>
+      {% for teacher in teachers %}
+        <li>{{ teacher.name }} — Avg Score: {{ teacher.avg_score|default:"No students" }}</li>
+      {% endfor %}
+    </ul>
+{% endblock %}

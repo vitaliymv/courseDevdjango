@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}
+  Analytics Dashboard
+{% endblock %}
+
+{% block content %}
+<body>
+  <h1>📊 Analytics Dashboard</h1>
+
+  <h2>📌 Загальна статистика</h2>
+  <ul>
+      <li>Total students: {{ total_students }}</li>
+      <li>Average score: {{ avg_score }}</li>
+      <li>Total courses: {{ total_courses }}</li>
+      <li>Total teachers: {{ total_teachers }}</li>
+  </ul>
+
+  <hr>
+
+  <h2>📊 Students per Course</h2>
+  <canvas id="courseChart"></canvas>
+
+  <h2>📊 Average Score per Teacher</h2>
+  <canvas id="teacherChart"></canvas>
+
+  <h2>📊 Students by Age</h2>
+  <canvas id="ageChart"></canvas>
+  <canvas id="diffChart"></canvas>
+{% endblock %}
+
+{% block js %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    new Chart(document.getElementById("courseChart"), {
+        type: "bar",
+        data: {
+            labels: {{ course_labels|safe }},
+            datasets: [{
+                label: "Students",
+                data: {{ course_data|safe }},
+            }]
+        }
+    });
+
+    new Chart(document.getElementById("teacherChart"), {
+        type: "bar",
+        data: {
+            labels: {{ teacher_labels|safe }},
+            datasets: [{
+                label: "Avg Score",
+                data: {{ teacher_data|safe }},
+            }]
+        }
+    });
+
+    new Chart(document.getElementById("ageChart"), {
+        type: "line",
+        data: {
+            labels: {{ age_labels|safe }},
+            datasets: [{
+                label: "Students count",
+                data: {{ age_data|safe }},
+            }]
+        }
+    });
+
+    new Chart(document.getElementById("diffChart"), {
+      type: "pie",
+      data: {
+          labels: {{ diff_labels|safe }},
+          datasets: [{
+              data: {{ diff_data|safe }},
+          }]
+      }
+  });
+  </script>
+</body>
+{% endblock %}

@@ -1,42 +1,40 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
-</head>
-<body>
-<h1>Students List</h1>
+{% extends 'base.html' %}
 
-<h2>All Students (score > hours studied)</h2>
-<ul>
-  {% for student in students %}
-    <li>
-      {{ student.name }} — Age: {{ student.age }} — Score: {{ student.score }} — Hours: {{ student.hours_studied }}<br>
-      Teacher: {{ student.teacher.name }}<br>
-      Courses: {% for c in student.courses.all %}{{ c.title }} {% endfor %}
-    </li>
-  {% endfor %}
-</ul>
+{% block title %}
+  Students list
+{% endblock %}
 
-<hr>
+{% block content %}
+  <h1>Students List</h1>
 
-<h2>Top 3 Students</h2>
-<ul>
-  {% for student in top3 %}
-    <li>{{ student.name }} — Score: {{ student.score }}</li>
-  {% endfor %}
-</ul>
+  <h2>All Students (score > hours studied)</h2>
+  <ul>
+    {% for student in students %}
+      <li>
+        {{ student.name }} — Age: {{ student.age }} — Score: {{ student.score }} — Hours: {{ student.hours_studied }}<br>
+        Teacher: {{ student.teacher.name }}<br>
+        Courses: {% for c in student.courses.all %}{{ c.title }} {% endfor %}
+      </li>
+    {% endfor %}
+  </ul>
 
-<hr>
+  <hr>
 
-<h2>Students (score > 90 OR hours studied > 5)</h2>
-<ul>
-  {% for student in q_filtered %}
-    <li>{{ student.name }} — Score: {{ student.score }} — Hours: {{ student.hours_studied }}</li>
-  {% endfor %}
-</ul>
-<a href="{% url 'student_add' %}">Add Student</a>
-<a href="{% url 'load_test_data' %}">Create new data</a>
-</body>
-</html>
+  <h2>Top 3 Students</h2>
+  <ul>
+    {% for student in top3 %}
+      <li>{{ student.name }} — Score: {{ student.score }}</li>
+    {% endfor %}
+  </ul>
+
+  <hr>
+
+  <h2>Students (score > 90 OR hours studied > 5)</h2>
+  <ul>
+    {% for student in q_filtered %}
+      <li>{{ student.name }} — Score: {{ student.score }} — Hours: {{ student.hours_studied }}</li>
+    {% endfor %}
+  </ul>
+  <a href="{% url 'student_add' %}">Add Student</a>
+  <a href="{% url 'load_test_data' %}">Create new data</a>
+{% endblock %}
