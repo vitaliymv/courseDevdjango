@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}{% endblock %}</title>
+    {% block head %} {% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+        Привіт, {{ user.username }} |
+        <a href="{% url 'dashboard' %}">Dashboard</a> |
+        <a href="{% url 'profile' %}">Profile</a> |
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a> |
+        <a href="{% url 'register' %}">Register</a>
+    {% endif %}
+
+    {% block content %} {% endblock %}
+
+    {% block js %} {% endblock %}
+</body>
+</html>
