@@ -1,0 +1,9 @@
+Django>=4.2
+celery
+redis
+reportlab
+django-celery-beat
+django-debug-toolbar
+djangorestframework
+django-cors-headers
+faker
